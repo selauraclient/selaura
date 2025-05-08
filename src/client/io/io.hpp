@@ -25,7 +25,7 @@ namespace selaura {
 #elif defined(SELAURA_LINUX)
 			data_folder = "/data/data/com.mojang.minecraftpe/Selaura";
 #else
-			// android?
+			data_folder = "/data/data/com.selauraclient.launcher/Selaura";
 #endif
 			log_file = data_folder / "logs.txt";
 			std::filesystem::create_directories(data_folder);
