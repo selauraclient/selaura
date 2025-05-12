@@ -4,8 +4,8 @@
 
 namespace selaura::bedrock {
 	struct StateVectorComponent {
-		Vec3 pos;
-		Vec3 pos_prev;
-		Vec3 pos_gamdelta;
+		Vec3 mPos;
+		Vec3 mPosPrev;
+		Vec3 mPosDelta;
 	};
 };
