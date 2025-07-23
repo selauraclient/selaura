@@ -15,6 +15,8 @@ add_library(selaura_client SHARED
     memory/sdk/client/ClientInstanceScreenModel.cpp
     memory/sdk/gui/GuiData.cpp
     command/impl/Help.cpp
+    command/impl/Enable.cpp
+    command/impl/Disable.cpp
     feature/impl/render/fullbright.cpp
     feature/impl/render/paperdoll.cpp
     feature/impl/render/enchant_glint.cpp

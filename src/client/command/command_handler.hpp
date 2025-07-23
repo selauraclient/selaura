@@ -8,11 +8,15 @@
 
 #include "command.hpp"
 #include "impl/Help.hpp"
+#include "impl/Enable.hpp"
+#include "impl/Disable.hpp"
 
 namespace selaura {
 
-    constexpr std::array<selaura::command, 1> default_commands = {
-        command{ "help", "Lists all available commands", &selaura::commands::help }
+    constexpr std::array<selaura::command, 3> default_commands = {
+        command{ "help", "Lists all available commands", &selaura::commands::help },
+        command{ "enable", "Enable a module", &selaura::commands::enable },
+        command{ "disable", "Disable a module", &selaura::commands::disable }
     };
 
     inline std::vector<command> command_list;

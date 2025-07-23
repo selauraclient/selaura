@@ -18,6 +18,9 @@ void init() {
 #endif
     static auto instance = std::make_shared<selaura::client>();
     instance->init();
+
+    auto& cmd_handler = instance->get<selaura::command_handler>();
+    std::thread(&selaura::command_handler::init_cmd, &cmd_handler).detach();
 }
 
 #ifdef SELAURA_WINDOWS
@@ -27,7 +30,7 @@ BOOL APIENTRY DllMain(HMODULE hmodule, DWORD dw_reason, LPVOID lp_reserved) {
         if (!handle.valid()) return false;
         DisableThreadLibraryCalls(static_cast<HMODULE>(handle.native_handle));
 
-        std::thread(&init).detach();
+         std::thread(&init).detach();
     }
     return true;
 }
