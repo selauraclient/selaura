@@ -13,6 +13,7 @@ add_library(selaura_client SHARED
     memory/sdk/renderer/bgfx/bgfx.cpp
     memory/sdk/core/RenderItemInHandDescription.cpp
     memory/sdk/client/ClientInstanceScreenModel.cpp
+    memory/sdk/gui/GuiData.cpp
     command/impl/Help.cpp
     feature/impl/render/fullbright.cpp
     feature/impl/render/paperdoll.cpp
