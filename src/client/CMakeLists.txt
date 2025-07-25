@@ -14,9 +14,6 @@ add_library(selaura_client SHARED
     memory/sdk/core/RenderItemInHandDescription.cpp
     memory/sdk/client/ClientInstanceScreenModel.cpp
     memory/sdk/gui/GuiData.cpp
-    command/impl/Help.cpp
-    command/impl/Enable.cpp
-    command/impl/Disable.cpp
     memory/sdk/game/network/MinecraftPackets.cpp
     feature/impl/render/fullbright.cpp
     feature/impl/render/paperdoll.cpp

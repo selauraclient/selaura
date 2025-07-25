@@ -101,4 +101,14 @@ namespace selaura {
     struct selaura::signature<&ClientInstanceScreenModel::executeCommand_hk> {
         static constexpr auto value = hat::compile_signature<"48 89 5C 24 ? 55 56 57 41 54 41 55 41 56 41 57 48 8D AC 24 ? ? ? ? 48 81 EC ? ? ? ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 85 ? ? ? ? 4C 8B EA 48 8B F1 C7 44 24">();
     };
+
+    template <>
+    struct selaura::signature<&GuiData::displayClientMessage_hk> {
+        static constexpr auto value = hat::compile_signature<"40 55 53 56 57 41 56 48 8D AC 24 ? ? ? ? 48 81 EC ? ? ? ? 0F 29 B4 24 ? ? ? ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 85 ? ? ? ? 49 8B F8 48 8B DA 48 8B F1 0F 57 C0">();
+    };
+
+    template <>
+    struct selaura::signature<&MinecraftPackets::createPacket_hk> {
+        static constexpr auto value = hat::compile_signature<"48 89 5C 24 10 48 89 74 24 18 57 48 83 EC 50 48 8B 05 ? ? ? ? 48 33 C4 48 89 44 24 48 48 8B D9 48 89">();
+    };
 };
