@@ -27,7 +27,7 @@ BOOL APIENTRY DllMain(HMODULE hmodule, DWORD dw_reason, LPVOID lp_reserved) {
         if (!handle.valid()) return false;
         DisableThreadLibraryCalls(static_cast<HMODULE>(handle.native_handle));
 
-         std::thread(&init).detach();
+        std::thread(&init).detach();
     }
     return true;
 }
