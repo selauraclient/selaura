@@ -168,6 +168,19 @@ namespace selaura {
         return std::invoke(original, std::forward<Args>(args)...);
     }
 
+    template <auto fn, typename... Args>
+    decltype(auto) call_original(Args&&... args) {
+        using fn_t = decltype(fn);
+        using pointer_t = typename selaura::fn_pointer_traits<fn_t>::pointer_type;
+
+        void* target = reinterpret_cast<void*>(selaura::resolve_signature<fn>());
+        pointer_t original;
+        std::memcpy(&original, &target, sizeof(original));
+
+        return std::invoke(original, std::forward<Args>(args)...);
+    }
+
+
     template <auto... fn>
     void patch_fns() {
         auto futures = std::array{

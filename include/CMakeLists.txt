@@ -61,6 +61,12 @@ CPMAddPackage(
         GIT_TAG main
 )
 
+CPMAddPackage(
+        NAME magic_enum
+        GITHUB_REPOSITORY Neargye/magic_enum
+        GIT_TAG master
+)
+
 add_library(selaura INTERFACE)
 add_library(selaura::selaura ALIAS selaura)
 
@@ -77,4 +83,5 @@ target_link_libraries(selaura INTERFACE
         glm
         safetyhook::safetyhook
         glaze::glaze
+        magic_enum::magic_enum
 )

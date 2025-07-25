@@ -7,7 +7,7 @@
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 
-#include "command/command_handler.hpp"
+//#include "command/command_handler.hpp"
 #include "event/event_manager.hpp"
 #include "feature/feature_manager.hpp"
 #include "memory/signatures.hpp"
@@ -33,7 +33,7 @@ namespace selaura {
     };
 
 
-    struct client : public client_base<selaura::event_manager, selaura::command_handler, selaura::feature_manager> {
+    struct client : public client_base<selaura::event_manager, selaura::feature_manager> {
         void init();
         void unload();
     };

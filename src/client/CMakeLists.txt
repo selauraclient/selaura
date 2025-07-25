@@ -17,6 +17,7 @@ add_library(selaura_client SHARED
     command/impl/Help.cpp
     command/impl/Enable.cpp
     command/impl/Disable.cpp
+    memory/sdk/game/network/MinecraftPackets.cpp
     feature/impl/render/fullbright.cpp
     feature/impl/render/paperdoll.cpp
     feature/impl/render/enchant_glint.cpp
@@ -32,6 +33,7 @@ target_include_directories(selaura_client PRIVATE
     glm
     safetyhook
     glaze
+    magic_enum
 )
 
 target_link_libraries(selaura_client PRIVATE
@@ -42,4 +44,5 @@ target_link_libraries(selaura_client PRIVATE
     glm
     safetyhook::safetyhook
     glaze::glaze
+    magic_enum::magic_enum
 )

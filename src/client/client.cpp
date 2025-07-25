@@ -1,7 +1,9 @@
 #include "client.hpp"
 
 #include "config/types.hpp"
+#include "magic_enum/magic_enum_utility.hpp"
 #include "memory/patcher.hpp"
+#include "memory/sdk/game/network/PacketHandlerDispatcherInstance.hpp"
 
 namespace selaura {
     void client::init() {
@@ -35,11 +37,26 @@ namespace selaura {
                 &GuiData::displayClientMessage_hk
             >();
 
+            magic_enum::enum_for_each<MinecraftPacketIds>([](auto val) {
+                constexpr MinecraftPacketIds id = val;
+
+                const auto pkt = selaura::call_original<&MinecraftPackets::createPacket_hk>(id);
+                if (!pkt) return;
+
+                Packet* packet = pkt.get();
+                void* vtable = packet->handler;
+
+                selaura::patch_vtable_fn<&PacketHandlerDispatcherInstance_callbacks<id>::handle>(vtable, 1);
+            });
+
             auto end = std::chrono::steady_clock::now();
             auto ms = std::chrono::duration<float, std::milli>(end - start).count();
             spdlog::info("Completed injection in {} ms.", static_cast<int>(ms));
 
             spdlog::info("Write \"help\" in the command line to see a list of commands.");
+
+            //auto command_handler = this->get<selaura::command_handler>();
+            //std::thread(&command_handler::start, command_handler).detach();
         } catch (const std::exception& e) {
             spdlog::info("std::exception: {}\n", e.what());
             this->unload();
