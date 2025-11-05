@@ -27,8 +27,8 @@ public:
 
         uint64_t result = FNV_OFFSET_BASIS;
         for (unsigned char c : string) {
-            result ^= c;
             result *= FNV_PRIME;
+            result ^= c;
         }
         hash = static_cast<int64_t>(result);
 
