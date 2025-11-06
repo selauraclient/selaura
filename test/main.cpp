@@ -9,31 +9,29 @@
 #include <api/helpers/mcuirc.hpp>
 #include <api/mc/client/renderer/MeshHelpers.hpp>
 
+#include "selaura_imgui.hpp"
+
 BOOL APIENTRY DllMain(HINSTANCE, DWORD, LPVOID) {
     return TRUE;
 }
 
-void after_ui(Selaura::SetupAndRenderEvent<Selaura::EventPhase::Post>& ev) {
-    auto scrn = ev.mCtx->mScreenContext;
-    scrn->tessellator->begin(mce::PrimitiveMode::QuadList, 4);
-    scrn->tessellator->color(1.f, 1.f, 1.f, 1.f);
+void AfterUI(Selaura::SetupAndRenderEvent<Selaura::EventPhase::Post>& ev) {
+    static bool state = false;
+    if (!state) {
+        SelauraImGui::Init(ev.mCtx, ev.mCtx->mScreenContext);
+        state = true;
+    }
 
-    glm::vec2 pos = {0, 0};
-    glm::vec2 size = {100, 100};
+    SelauraImGui::NewFrame();
+    ImGui::NewFrame();
 
-    scrn->tessellator->vertex(pos.x, pos.y + size.y, 0.f);
-    scrn->tessellator->vertex(pos.x + size.x, pos.y + size.y, 0.f);
-    scrn->tessellator->vertex(pos.x + size.x, pos.y, 0.f);
-    scrn->tessellator->vertex(pos.x, pos.y, 0.f);
+    ImGui::GetForegroundDrawList()->AddRectFilled({0, 0}, {100, 100}, ImColor(255, 0, 0));
 
-    auto mat = mce::MaterialPtr::createMaterial(HashedString("ui_fill_color"));
-    char pad[0x58]{};
-    MeshHelpers::renderMeshImmediately(scrn, scrn->tessellator, mat, pad);
-
-
-    //ev.mCtx->mClientInstance->mGuiData->displayLocalMessage("this is from a plugin!");
+    ImGui::EndFrame();
+    ImGui::Render();
+    SelauraImGui::RenderDrawData(ImGui::GetDrawData());
 }
 
 SELAURA_API void SelauraPluginInit(Selaura::Runtime* pRuntime) {
-    pRuntime->mEventManager->subscribe(&after_ui);
+    pRuntime->mEventManager->subscribe(&AfterUI);
 }

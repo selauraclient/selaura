@@ -5,6 +5,7 @@
 
 class ScreenContext;
 class Tessellator;
+class BedrockTextureData;
 
 class HashedString {
 public:
@@ -81,11 +82,16 @@ namespace mce {
 namespace MeshHelpers {
     inline void renderMeshImmediately(ScreenContext* screenContext, Tessellator* tessellator, const mce::MaterialPtr* material, char* a4) {
         using fn_t = decltype(&MeshHelpers::renderMeshImmediately);
-
-        //auto sig = Selaura::FindSignature<"E8 ? ? ? ? C6 46 ? ? F3 41 0F 10 5F">();
-        //auto final = sig + 1 + 4 + *reinterpret_cast<int*>(sig + 1);
-
         static fn_t fn = std::bit_cast<fn_t>(Selaura::FindSignature<"48 89 5C 24 ? 55 56 57 41 56 41 57 48 81 EC ? ? ? ? 49 8B F1 4D 8B F0 48 8B FA">());
         return (*fn)(screenContext, tessellator, material, a4);
     }
+
+    /*
+
+    inline void renderMeshImmediately(ScreenContext* screenContext, Tessellator* tessellator, const mce::MaterialPtr* material, BedrockTextureData& data, char* a4) {
+    using fn_t = decltype(&MeshHelpers::renderMeshImmediately);
+    static fn_t fn = std::bit_cast<fn_t>(Selaura::FindSignature<"40 55 53 56 57 41 54 41 55 41 56 41 57 48 8D AC 24 ? ? ? ? 48 81 EC ? ? ? ? 49 8B F9 4D 8B F8">());
+    return (*fn)(screenContext, tessellator, material, data, a4);
+    }
+    */
 };
