@@ -3,6 +3,7 @@
 
 #include <api/mc/world/Minecraft.hpp>
 #include <api/mc/client/ClientInstance.hpp>
+#include <platform/platform.hpp>
 
 namespace Selaura {
     struct SharedContext {
@@ -16,13 +17,14 @@ namespace Selaura {
     struct ServerContext : SharedContext {};
 
     struct RuntimeContext {
-        std::thread::id thread_id;
-        int version_major;
-        int version_minor;
-        int version_build;
-        int version_revision;
+        std::thread::id mThreadId;
+        int mVersionMajor;
+        int mVersionMinor;
+        int mVersionBuild;
+        int mVersionRevision;
 
-        ClientContext* client_ctx;
-        ServerContext* server_ctx;
+        ClientContext* mClientCtx;
+        ServerContext* mServerCtx;
+        std::unique_ptr<Platform> mPlatform;
     };
 };

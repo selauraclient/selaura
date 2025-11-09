@@ -3,6 +3,7 @@ project(selaura_runtime LANGUAGES CXX)
 
 add_library(selaura_runtime SHARED
         main.cpp
+        platform/windows.cpp
         runtime.cpp
         hooks/hooks.cpp
 )

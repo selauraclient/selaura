@@ -6,7 +6,6 @@
 #include <iostream>
 #include <print>
 #include <thread>
-#include <shlobj_core.h>
 
 #include <winrt/windows.applicationmodel.h>
 #include <winrt/windows.foundation.h>
@@ -14,44 +13,22 @@
 
 #include <runtime.hpp>
 
-std::thread::id mc_thread_id;
-HANDLE mc_thread_handle = nullptr;
+#include <platform/windows.hpp>
+
+std::thread::id mcThreadId;
+HANDLE mcThreadHandle = nullptr;
 
 DWORD WINAPI SelauraRuntimeLoaderProc() {
-    AllocConsole();
+    auto platform = std::make_unique<Selaura::WindowsPlatform>(mcThreadHandle);
+    auto* ctx = new Selaura::RuntimeContext;
+    ctx->mPlatform = std::move(platform);
 
-    AttachConsole(GetCurrentProcessId());
-    SetConsoleTitleA("Selaura Runtime Console");
+    ctx->mPlatform->InitConsole();
 
-    FILE* fp;
-    freopen_s(&fp, "CONOUT$", "w", stdout);
-    freopen_s(&fp, "CONOUT$", "w", stderr);
-    freopen_s(&fp, "CONIN$", "r", stdin);
-
-    std::println("[Selaura Runtime Loader] Thread ID: {}, Thread Handle: {}", mc_thread_id, mc_thread_handle);
+    std::println("[Selaura Runtime Loader] Thread ID: {}, Thread Handle: {}", mcThreadId, mcThreadHandle);
     std::println("[Selaura Runtime Loader] Press Numpad1 to End");
 
-    PWSTR appDataPath = nullptr;
-    if (FAILED(SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, nullptr, &appDataPath))) {
-        throw std::runtime_error("Failed to get AppData path");
-    }
-
-    std::filesystem::path folder = appDataPath;
-    CoTaskMemFree(appDataPath);
-
-    folder /= R"(Minecraft Bedrock\Users\Shared\games\com.mojang\Selaura)";
-
-
-    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-    if (hOut != INVALID_HANDLE_VALUE) {
-        DWORD mode = 0;
-        if (GetConsoleMode(hOut, &mode)) {
-            SetConsoleMode(hOut, mode | 0x0004);
-        }
-    }
-
-
-    auto* ctx = new Selaura::RuntimeContext;
+    auto folder = ctx->mPlatform->GetSelauraFolder();
 
     const auto runtime_path = folder / "selaura_runtime.dll";
     if (!std::filesystem::exists(runtime_path)) {
@@ -106,9 +83,9 @@ DWORD WINAPI SelauraRuntimeLoaderProc() {
             }
         };
 
-        SuspendThread(mc_thread_handle);
+        SuspendThread(mcThreadHandle);
 
-        ctx->thread_id = mc_thread_id;
+        ctx->mThreadId = mcThreadId;
 
         DWORD handle = 0;
         wchar_t path[MAX_PATH];
@@ -121,10 +98,10 @@ DWORD WINAPI SelauraRuntimeLoaderProc() {
                 VS_FIXEDFILEINFO* file_info = nullptr;
                 UINT len = 0;
                 if (VerQueryValueW(buffer.data(), L"\\", reinterpret_cast<LPVOID*>(&file_info), &len) && file_info) {
-                    ctx->version_major = HIWORD(file_info->dwFileVersionMS);
-                    ctx->version_minor = LOWORD(file_info->dwFileVersionMS);
-                    ctx->version_build = HIWORD(file_info->dwFileVersionLS);
-                    ctx->version_revision = LOWORD(file_info->dwFileVersionLS);
+                    ctx->mVersionMajor = HIWORD(file_info->dwFileVersionMS);
+                    ctx->mVersionMinor = LOWORD(file_info->dwFileVersionMS);
+                    ctx->mVersionBuild = HIWORD(file_info->dwFileVersionLS);
+                    ctx->mVersionRevision = LOWORD(file_info->dwFileVersionLS);
                 }
             }
         }
@@ -134,7 +111,7 @@ DWORD WINAPI SelauraRuntimeLoaderProc() {
         auto runtime_init = reinterpret_cast<runtime_init_fn>(GetProcAddress(mod, "SelauraRuntimeInit"));
         runtime_init(ctx, load_mods);
 
-        ResumeThread(mc_thread_handle);
+        ResumeThread(mcThreadHandle);
     }
 
     HWND hwnd = nullptr;
@@ -196,9 +173,9 @@ DWORD WINAPI SelauraRuntimeLoaderProc() {
         (void)DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, &value_true, sizeof(value_true));
 
         std::string title = std::format("Selaura Runtime ({}.{}.{}/{}-{})",
-            ctx->version_major,
-            ctx->version_minor,
-            ctx->version_build,
+            ctx->mVersionMajor,
+            ctx->mVersionMinor,
+            ctx->mVersionBuild,
             RUNTIME_VERSION,
             GIT_BRANCH
         );
@@ -218,7 +195,6 @@ DWORD WINAPI SelauraRuntimeLoaderProc() {
         if (GetAsyncKeyState(VK_NUMPAD1)) break;
     }
 
-    fclose(fp);
     FreeConsole();
 
     ExitProcess(0);
@@ -229,8 +205,8 @@ DWORD WINAPI SelauraRuntimeLoaderProc() {
 BOOL APIENTRY DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
     if (fdwReason == DLL_PROCESS_ATTACH) {
         proxy::init_runtime();
-        mc_thread_id = std::this_thread::get_id();
-        mc_thread_handle = OpenThread(THREAD_ALL_ACCESS, FALSE, GetCurrentThreadId());
+        mcThreadId = std::this_thread::get_id();
+        mcThreadHandle = OpenThread(THREAD_ALL_ACCESS, FALSE, GetCurrentThreadId());
 
         CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)SelauraRuntimeLoaderProc, nullptr, 0, nullptr);
     }

@@ -8,12 +8,12 @@ namespace Selaura {
     Runtime::Runtime(const RuntimeContext& ctx) {
         std::println("[Selaura Runtime] Created runtime.");
         std::println("[Selaura Runtime] Running on Minecraft Version: {}.{}.{}.{}",
-            ctx.version_major,
-            ctx.version_minor,
-            ctx.version_build,
-            ctx.version_revision);
+            ctx.mVersionMajor,
+            ctx.mVersionMinor,
+            ctx.mVersionBuild,
+            ctx.mVersionRevision);
 
-        this->mThreadId = ctx.thread_id;
+        this->mThreadId = ctx.mThreadId;
 
         this->mClientCtx = std::make_unique<ClientContext>();
         this->mServerCtx = std::make_unique<ServerContext>();
